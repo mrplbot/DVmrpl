@@ -258,75 +258,72 @@ if(!matchMedia("(prefers-reduced-motion: reduce)").matches){
 }
 </script>
 </body><style>
-.pic{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .9s ease,transform .9s ease}
+.pic{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.025);transition:opacity .7s ease,transform 1.1s cubic-bezier(.2,.7,.2,1);pointer-events:none}
 .pic.on{opacity:1}
-.tile.photo::after,.ph.photo::after{inset:0;height:auto;clip-path:none;background:linear-gradient(180deg,rgba(7,20,30,0) 40%,rgba(7,20,30,.72))}
-.tile:hover .pic,.card:hover .pic{transform:scale(1.07)}
-.ph{height:11rem;overflow:hidden}
-.rv .card{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s}
-.rv .card.in{opacity:1;transform:none}
-.credit{margin-top:.6rem;font-size:.85rem}
+.tile{isolation:isolate;min-height:12rem;padding:1.15rem;border-radius:1.2rem;background:#183747;box-shadow:0 10px 28px rgba(12,36,49,.12);transition:transform .35s ease,box-shadow .35s ease}
+.tile:first-child{min-height:15rem}
+.tile::after,.tile.photo::after{content:"";position:absolute;inset:0;height:auto;clip-path:none;background:linear-gradient(180deg,rgba(5,20,29,.02) 20%,rgba(5,20,29,.12) 48%,rgba(5,20,29,.78) 100%);z-index:0}
+.tile span{font-size:clamp(1rem,2vw,1.25rem);line-height:1.2;max-width:90%;text-shadow:0 2px 14px rgba(0,0,0,.35)}
+.tile:hover{filter:none;transform:translateY(-4px);box-shadow:0 16px 36px rgba(12,36,49,.2)}
+.tile:hover .pic,.card:hover .pic{transform:scale(1.09)}
+.ph{height:13rem;padding:.9rem;overflow:hidden;background:#183747}
+.ph::after{content:"";position:absolute;inset:0;height:auto;clip-path:none;background:linear-gradient(180deg,rgba(5,20,29,.05),rgba(5,20,29,.0) 38%,rgba(5,20,29,.5));z-index:0}
+.ph span{z-index:1;backdrop-filter:blur(8px);background:rgba(8,30,42,.58);border:1px solid rgba(255,255,255,.22);letter-spacing:.02em}
+.card{box-shadow:0 8px 24px rgba(12,36,49,.06);transition:transform .35s ease,box-shadow .35s ease}
+.card:hover{transform:translateY(-5px);box-shadow:0 16px 34px rgba(12,36,49,.13)}
+.cb{padding:1.1rem 1.15rem 1.25rem}
+.cb h3{letter-spacing:-.015em}
+.cb p{min-height:1.5em}
+@media(max-width:45.99rem){.tiles{gap:.65rem}.tile{min-height:10.5rem;padding:.85rem}.tile:first-child{min-height:13rem}.ph{height:12rem}}
+@media(prefers-reduced-motion:reduce){.pic,.tile,.card{transition:none!important}}
 </style>
 <script>
 (function(){
-var photos=[
-  "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1000&q=85"
-];
-function put(box,url){
-  if(!box||!url)return;
-  var i=new Image();
-  i.alt="";
-  i.className="pic";
-  i.decoding="async";
-  i.loading="lazy";
-  i.onload=function(){box.classList.add("photo");i.classList.add("on")};
-  i.onerror=function(){i.remove()};
-  i.src=url;
-  box.insertBefore(i,box.firstChild);
+var base="https://images.unsplash.com/";
+var photos={
+  hero:"photo-1464822759023-fed622ff2c3b",
+  tiles:["photo-1519681393784-d120267933ba","photo-1501785888041-af3ef285b470","photo-1518837695005-2083093ee35b","photo-1500530855697-b586d89ba3ee","photo-1499856871958-5b9627545d1a"],
+  pools:[
+    ["photo-1470252649378-9c29740c9fa8","photo-1500534623283-312aade485b7","photo-1470770841072-f978cf4d019e"],
+    ["photo-1464822759023-fed622ff2c3b","photo-1519681393784-d120267933ba","photo-1506905925346-21bda4d32df4","photo-1464278533981-50106e6176b1"],
+    ["photo-1501785888041-af3ef285b470","photo-1518837695005-2083093ee35b","photo-1500375592092-40eb2168fd21"],
+    ["photo-1500530855697-b586d89ba3ee","photo-1470770841072-f978cf4d019e","photo-1500534623283-312aade485b7"],
+    ["photo-1499856871958-5b9627545d1a","photo-1519608487953-e999c86e7455","photo-1480714378408-67cf0d13bc1b"]
+  ]
+};
+function url(id,width){return base+id+"?auto=format&fit=crop&w="+width+"&q=86"}
+function put(box,id,width){
+  if(!box||!id)return;
+  var img=new Image();
+  img.alt="";img.className="pic";img.decoding="async";img.loading="lazy";
+  img.onload=function(){box.classList.add("photo");img.classList.add("on")};
+  img.onerror=function(){img.remove()};
+  img.src=url(id,width);box.insertBefore(img,box.firstChild);
 }
-var hero=document.getElementById("bg");
-if(hero){
-  var hi=new Image();
-  hi.alt="";
-  hi.className="pic";
-  hi.decoding="async";
-  hi.onload=function(){
-    hi.style.opacity=".55";
-    hi.style.objectFit="cover";
-    hi.style.width="100%";
-    hi.style.height="100%";
-    hi.classList.add("on");
-  };
-  hi.onerror=function(){hi.remove()};
-  hi.src=photos[1].replace("w=1000","w=1800");
-  hero.insertBefore(hi,hero.firstChild);
-}
+put(document.getElementById("bg"),photos.hero,1900);
 [].forEach.call(document.querySelectorAll(".tile"),function(tile,n){
-  put(tile,photos[[0,1,2,3,4][n]||0]);
+  put(tile,photos.tiles[n]||photos.tiles[0],850);
 });
+var used=[0,0,0,0,0];
 [].forEach.call(document.querySelectorAll(".card"),function(card){
-  var category=Number(card.dataset.c);
   var title=card.querySelector("h3").textContent.toLowerCase();
-  var index=category;
-  if(/ростов|краснодар|грозный|элиста|шоп|темерник|дельфинарий/.test(title))index=4;
-  if(/абхаз|домбай|теберда|архыз|адыгея|эльбрус|горн/.test(title))index=1;
-  if(/аквапарк|терм|море|лазур/.test(title))index=2;
-  if(/сплав|байдар|раздор|кочетов|заповедник|каменные могилы/.test(title))index=3;
-  if(/новогод/.test(title))index=0;
-  put(card.querySelector(".ph"),photos[index]||photos[4]);
+  var cat=Number(card.dataset.c);
+  if(/новогод|ростов|краснодар|грозный|элиста|шоп|темерник|дельфинарий/.test(title))cat=/новогод/.test(title)?0:4;
+  if(/абхаз|домбай|теберда|архыз|адыгея|эльбрус|горн/.test(title))cat=1;
+  if(/аквапарк|терм|море|лазур/.test(title))cat=2;
+  if(/сплав|байдар|раздор|кочетов|заповедник|каменные могилы/.test(title))cat=3;
+  var pool=photos.pools[cat]||photos.pools[4];
+  var id=pool[used[cat]++%pool.length];
+  put(card.querySelector(".ph"),id,900);
 });
 if("IntersectionObserver" in window){
   document.documentElement.classList.add("rv");
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){
-      if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){entry.target.classList.add("in");io.unobserve(entry.target)}
     });
-  },{threshold:.1});
-  [].forEach.call(document.querySelectorAll(".card"),function(c){io.observe(c)});
+  },{threshold:.08});
+  [].forEach.call(document.querySelectorAll(".card"),function(card){io.observe(card)});
 }
 })();
 </script>
