@@ -25,6 +25,22 @@ section{padding:3.5rem 0;border-top:1px solid var(--line)}
 .btn.ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.8)}
 .btn.dark{background:var(--ink);color:var(--bg)}
 
+
+/* Рассветный луг и лёгкое движение травы */
+.bg::after{
+  content:"";position:absolute;left:-8%;right:-8%;bottom:0;height:43%;
+  pointer-events:none;opacity:.32;transform-origin:bottom center;
+  background:repeating-linear-gradient(101deg,transparent 0 17px,rgba(205,238,151,.42) 18px 20px,transparent 21px 37px);
+  -webkit-mask-image:linear-gradient(to top,#000 0%,rgba(0,0,0,.8) 38%,transparent 100%);
+  mask-image:linear-gradient(to top,#000 0%,rgba(0,0,0,.8) 38%,transparent 100%);
+  animation:grassSway 7s ease-in-out infinite alternate;
+}
+@keyframes grassSway{
+  from{transform:skewX(-2deg) scaleX(1.02) translateX(-.5%)}
+  to{transform:skewX(2deg) scaleX(1.06) translateX(.5%)}
+}
+@media(prefers-reduced-motion:reduce){.bg::after{animation:none}}
+
 /* hero */
 .hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden;color:#fff;padding-top:env(safe-area-inset-top,0px);background:#0B1F2A}
 .bg{position:absolute;inset:-6% 0;will-change:transform}
@@ -281,7 +297,7 @@ if(!matchMedia("(prefers-reduced-motion: reduce)").matches){
 (function(){
 var base="https://images.unsplash.com/";
 var photos={
-  hero:"photo-1464822759023-fed622ff2c3b",
+  hero:"photo-1470252649378-9c29740c9fa8",
   tiles:["photo-1519681393784-d120267933ba","photo-1501785888041-af3ef285b470","photo-1518837695005-2083093ee35b","photo-1500530855697-b586d89ba3ee","photo-1499856871958-5b9627545d1a"],
   pools:[
     ["photo-1470252649378-9c29740c9fa8","photo-1500534623283-312aade485b7","photo-1470770841072-f978cf4d019e"],
