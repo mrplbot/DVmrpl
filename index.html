@@ -269,44 +269,65 @@ if(!matchMedia("(prefers-reduced-motion: reduce)").matches){
 </style>
 <script>
 (function(){
-var B="https://commons.wikimedia.org/wiki/Special:FilePath/";
-var F={
-ulgen:"Dombai-Ulgen Gorge.jpg",
-dombay:"Dombay, Dzhuguturlyuchat massif and glacier, Caucasus Mountains, Karachay-Cherkessia.jpg",
-lazur:"Karachay-Cherkessia, Caucasus Mountains, Abishira-Akhuba, Lazurnoe Lake under clouds.jpg",
-sofia:"Sofia Massif and Sofia Glacier, Karachay-Cherkessia, Caucasus Mountains.jpg",
-ritsa:"Ritsa Nature Reserve, Abkhazia.jpg",
-crimea:"Crimea mountains panorama.jpg",
-sudak:"Вид на Судак с мыса Алчак.jpg",
-froz:"Frozen Don River in Russian winter, Rostov-on-Don, Russia.jpg",
-dondusk:"Rostov-on-Don, Don River at sunset, Russia.jpg",
-night:"Rostov-on-Don, Majestic Don River at night, Russia.jpg",
-gorky:"Iconic view of Rostov-on-Don, panorama of Rostov-on-Don city centre as seen from Gorky Park, Rostov-on-Don, Russia.jpg"
-};
-function src(k,w){return B+encodeURIComponent(F[k].replace(/ /g,"_"))+"?width="+w}
-function put(box,k,w,eager){
-  if(!box||!k)return;
-  var i=new Image();i.alt="";i.className="pic";i.decoding="async";
-  if(!eager)i.loading="lazy";
+var photos=[
+  "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1000&q=85",
+  "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=85",
+  "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1000&q=85",
+  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=85",
+  "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1000&q=85"
+];
+function put(box,url){
+  if(!box||!url)return;
+  var i=new Image();
+  i.alt="";
+  i.className="pic";
+  i.decoding="async";
+  i.loading="lazy";
   i.onload=function(){box.classList.add("photo");i.classList.add("on")};
   i.onerror=function(){i.remove()};
-  i.src=src(k,w);box.insertBefore(i,box.firstChild);
+  i.src=url;
+  box.insertBefore(i,box.firstChild);
 }
-put(document.getElementById("bg"),"ulgen",1600,1);
-var tk=["froz","dombay","sudak","dondusk","gorky"];
-[].forEach.call(document.querySelectorAll(".tile"),function(t,n){put(t,tk[n],700)});
-var R=[[/Абхазия/,"ritsa"],[/Домбай|Теберда/,"ulgen"],[/Архыз/,"lazur"],[/Грозный|Кезеной/,"sofia"],[/Крым/,"crimea"],[/Сплав/,"dondusk"],[/Новогодний Ростов/,"froz"],[/дельфинарий|Темерник/,"night"],[/Ростов/,"gorky"]];
-[].forEach.call(document.querySelectorAll(".card"),function(c){
-  var name=c.querySelector("h3").textContent,k;
-  R.some(function(r){if(r[0].test(name)){k=r[1];return true}});
-  put(c.querySelector(".ph"),k,700);
+var hero=document.getElementById("bg");
+if(hero){
+  var hi=new Image();
+  hi.alt="";
+  hi.className="pic";
+  hi.decoding="async";
+  hi.onload=function(){
+    hi.style.opacity=".55";
+    hi.style.objectFit="cover";
+    hi.style.width="100%";
+    hi.style.height="100%";
+    hi.classList.add("on");
+  };
+  hi.onerror=function(){hi.remove()};
+  hi.src=photos[1].replace("w=1000","w=1800");
+  hero.insertBefore(hi,hero.firstChild);
+}
+[].forEach.call(document.querySelectorAll(".tile"),function(tile,n){
+  put(tile,photos[[0,1,2,3,4][n]||0]);
+});
+[].forEach.call(document.querySelectorAll(".card"),function(card){
+  var category=Number(card.dataset.c);
+  var title=card.querySelector("h3").textContent.toLowerCase();
+  var index=category;
+  if(/ростов|краснодар|грозный|элиста|шоп|темерник|дельфинарий/.test(title))index=4;
+  if(/абхаз|домбай|теберда|архыз|адыгея|эльбрус|горн/.test(title))index=1;
+  if(/аквапарк|терм|море|лазур/.test(title))index=2;
+  if(/сплав|байдар|раздор|кочетов|заповедник|каменные могилы/.test(title))index=3;
+  if(/новогод/.test(title))index=0;
+  put(card.querySelector(".ph"),photos[index]||photos[4]);
 });
 if("IntersectionObserver" in window){
   document.documentElement.classList.add("rv");
-  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.1});
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}
+    });
+  },{threshold:.1});
   [].forEach.call(document.querySelectorAll(".card"),function(c){io.observe(c)});
 }
-document.querySelector("footer .wrap").insertAdjacentHTML("beforeend",'<div class="credit">Фото: <a href="https://commons.wikimedia.org">Wikimedia Commons</a>, в том числе Вячеслав Аргенберг (CC BY 4.0).</div>');
 })();
 </script>
 
